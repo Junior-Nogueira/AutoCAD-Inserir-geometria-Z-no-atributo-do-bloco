@@ -1,27 +1,3 @@
-
-;;----------------------------------------------------------------;;
-(defun c:ATZ ( / select value onblk ptZ setatt)  
-  (if 
-    (and
-      (setq select (LM:ssget "\nSelecione bloco com atributo: " '(((0 . "INSERT")(66 . 1)))))
-      (setq value (getstring "\nDigite o nome do atributo para inserir a elevacao: "))
-    )
-    (foreach x (vl-remove-if 'listp (mapcar 'cadr (ssnamex select)))
-      (setq onblk (vlax-ename->vla-object x))
-      (setq blkba (vlax-get onblk 'insertionpoint))
-      (if (and (setq ptZ (nth 2 blkba)) (not (null value)))
-        (setq setatt (LM:vl-setattributevalue onblk value (rtos ptZ 2 2)))
-        (prompt "\nElevacao Z nula ou 0.00 ou atributo inexistente.")
-      )
-      (prompt (strcat "\nValor adicionado em " (rtos (sslength select) 2 0 ) " Bloco(s)."))
-    )
-    (prompt "Oops!!Bloco sem atributo ou nenhuma selacao!")
-  )
-  (princ)
-)
-(vl-load-com)
-(prompt "\nPrograma feito para Gustavo Iatalesi \nDigite :: ATZ :: para iniciar!" )
-;;----------------------------------------------------------------;;
 ;; ssget - Lee Mac
 ;; A wrapper for the ssget function to permit the use of a custom selection prompt
 ;; msg - [str] selection prompt
@@ -46,3 +22,40 @@
   (setq tag (strcase tag))
   (vl-some '(lambda ( att )(if (= tag (strcase (vla-get-tagstring att))) (progn (vla-put-textstring att val) val)))(vlax-invoke blk 'getattributes))
 )
+;;----------------------------------------------------------------;;
+;;                 ATZ - Atributo com elecao Z                    ;;
+;;----------------------------------------------------------------;;
+;; Programa insere elevacao (Z)                                   ;;
+;; no atributo  escolhivo pelo usuario                            ;; 
+;;                                                                ;;
+;;----------------------------------------------------------------;;
+;; Autor Junior Nogueira                                          ;;
+;; contato: Frjuniornogueira1@gmail.com                           ;;
+;;----------------------------------------------------------------;;
+;; Versão 1.0 - Start                                             ;;
+;;----------------------------------------------------------------;;
+
+(defun c:ATZ ( / select value onblk ptZ setatt )  
+  (if 
+    (and
+      (setq select (LM:ssget "\nSelecione bloco com atributo: " '(((0 . "INSERT")(66 . 1)))))
+      (setq value (getstring "\nDigite o nome do atributo para inserir a elevacao: "))
+    )
+    (foreach x (vl-remove-if 'listp (mapcar 'cadr (ssnamex select)))
+      (setq onblk (vlax-ename->vla-object x))
+      (setq blkba (vlax-get onblk 'insertionpoint))
+      (if (setq ptZ (nth 2 blkba))
+        (if (null (setq setatt (LM:vl-setattributevalue onblk value (rtos ptZ 2 2))))
+          (prompt "\nElevacao Z nula ou 0.00 ou atributo inexistente.")
+        )
+      )
+    )
+    (prompt "\nOops!!Bloco sem atributo ou nenhuma selacao!")
+  )
+  (prompt (strcat "\nValor adicionado em " (rtos (sslength select) 2 0 ) " Bloco(s)."))
+  (princ)
+)
+(vl-load-com)
+(prompt "\nPrograma feito para Gustavo Iatalesi \nDigite :: ATZ :: para iniciar!" )
+(princ)
+;;----------------------------------------------------------------;;
