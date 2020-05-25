@@ -23,6 +23,18 @@
   (vl-some '(lambda ( att )(if (= tag (strcase (vla-get-tagstring att))) (progn (vla-put-textstring att val) val)))(vlax-invoke blk 'getattributes))
 )
 ;;----------------------------------------------------------------;;
+;;                 ATZ - Atributo com elecao Z                    ;;
+;;----------------------------------------------------------------;;
+;; Programa insere elevacao (Z)                                   ;;
+;; no atributo  escolhivo pelo usuario                            ;; 
+;;                                                                ;;
+;;----------------------------------------------------------------;;
+;; Autor Junior Nogueira                                          ;;
+;; contato: Frjuniornogueira1@gmail.com                           ;;
+;;----------------------------------------------------------------;;
+;; Versão 1.0 - Start                                             ;;
+;;----------------------------------------------------------------;;
+
 (defun c:ATZ ( / select value onblk ptZ setatt )  
   (if 
     (and
